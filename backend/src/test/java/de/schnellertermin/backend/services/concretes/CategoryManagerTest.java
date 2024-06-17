@@ -6,6 +6,7 @@ import de.schnellertermin.backend.repositories.CategoryRepository;
 import de.schnellertermin.backend.services.abstracts.IdService;
 import de.schnellertermin.backend.services.dtos.requests.CategoryRequest;
 import de.schnellertermin.backend.services.dtos.responses.CategoryCreatedResponse;
+import de.schnellertermin.backend.services.rules.CategoryBusinessRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -30,6 +31,10 @@ class CategoryManagerTest {
     @Mock
     private IdService idService;
 
+    @Mock
+    @SuppressWarnings("unused")
+    private CategoryBusinessRule categoryBusinessRule;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -40,7 +45,7 @@ class CategoryManagerTest {
     void addCategory_whenRequestIsValid_returnCategoryCreatedResponse() {
         // GIVEN
         CategoryRequest categoryRequest = CategoryRequest.builder().name("Test Category").build();
-        CategoryCreatedResponse expectedResponse = CategoryCreatedResponse.builder().build();
+        CategoryCreatedResponse expectedResponse = CategoryCreatedResponse.builder().name("Test Category").build();
         Category category = Category.builder().build();
 
         // WHEN

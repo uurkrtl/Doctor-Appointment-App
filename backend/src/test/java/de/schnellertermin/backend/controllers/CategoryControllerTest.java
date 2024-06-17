@@ -36,4 +36,17 @@ class CategoryControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists());
     }
 
+    @Test
+    void addCategory_whenCategoryNameNull_shouldThrowBadRequest() throws Exception {
+        // GIVEN
+        CategoryRequest categoryRequest = CategoryRequest.builder().build();
+
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/categories")
+                        .content(objectMapper.writeValueAsString(categoryRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
 }
