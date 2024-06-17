@@ -35,4 +35,16 @@ class GlobalExceptionHandlerTest {
         assertEquals("Duplicate Record", Objects.requireNonNull(responseEntity.getBody()).getMessage());
         assertEquals("/api/categories", responseEntity.getBody().getApiPath());
     }
+
+    @Test
+    void testHandleException() {
+        Exception ex = new Exception("An error occurred");
+        when(webRequest.getDescription(false)).thenReturn("/api/categories");
+
+        ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleException(ex, webRequest);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("An error occurred", Objects.requireNonNull(responseEntity.getBody()).getMessage());
+        assertEquals("/api/categories", responseEntity.getBody().getApiPath());
+    }
 }
