@@ -1,6 +1,8 @@
 package de.schnellertermin.backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.schnellertermin.backend.models.Category;
+import de.schnellertermin.backend.repositories.CategoryRepository;
 import de.schnellertermin.backend.services.dtos.requests.CategoryRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ class CategoryControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Test
     void getAllCategories_shouldReturnsListOfCategories() throws Exception {
@@ -30,6 +34,32 @@ class CategoryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").isArray());
+    }
+
+    @Test
+    void getCategoryById_whenCategoryExists_shouldReturnCategory() throws Exception {
+        // GIVEN
+        String categoryId = "1";
+        categoryRepository.save(Category.builder().id(categoryId).name("Test Category").build());
+
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/categories/" + categoryId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(categoryId));
+    }
+
+    @Test
+    void getCategoryById_whenCategoryDoesNotExist_shouldReturnNotFound() throws Exception {
+        // GIVEN
+        String categoryId = "1";
+
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/categories/" + categoryId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
