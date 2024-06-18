@@ -1,6 +1,7 @@
 package de.schnellertermin.backend.core.exceptions;
 
 import de.schnellertermin.backend.core.exceptions.types.DuplicateRecordException;
+import de.schnellertermin.backend.core.exceptions.types.RecordNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,6 +23,18 @@ public class GlobalExceptionHandler {
                 .timeStamp(LocalDateTime.now())
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(RecordNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleRecordNotFoundException(RecordNotFoundException ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .apiPath(request.getDescription(false))
+                .status(HttpStatus.NOT_FOUND)
+                .title("Record Not Found")
+                .message(ex.getMessage())
+                .timeStamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
