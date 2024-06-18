@@ -23,6 +23,16 @@ class CategoryControllerTest {
     private MockMvc mockMvc;
 
     @Test
+    void getAllCategories_shouldReturnsListOfCategories() throws Exception {
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/categories")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray());
+    }
+
+    @Test
     void addCategory_whenRequestIsValid_returnCategoryCreatedResponse() throws Exception {
         // GIVEN
         CategoryRequest categoryRequest = CategoryRequest.builder().name("Test Category").build();

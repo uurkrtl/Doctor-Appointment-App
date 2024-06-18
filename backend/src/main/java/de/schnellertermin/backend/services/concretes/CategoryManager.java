@@ -7,9 +7,12 @@ import de.schnellertermin.backend.services.abstracts.CategoryService;
 import de.schnellertermin.backend.services.abstracts.IdService;
 import de.schnellertermin.backend.services.dtos.requests.CategoryRequest;
 import de.schnellertermin.backend.services.dtos.responses.CategoryCreatedResponse;
+import de.schnellertermin.backend.services.dtos.responses.CategoryGetAllResponse;
 import de.schnellertermin.backend.services.rules.CategoryBusinessRule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,12 @@ public class CategoryManager implements CategoryService {
     private final IdService idService;
     private final ModelMapperService modelMapperService;
     public final CategoryBusinessRule categoryBusinessRule;
+
+    @Override
+    public List<CategoryGetAllResponse> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream().map(category -> modelMapperService.forResponse().map(category, CategoryGetAllResponse.class)).toList();
+    }
 
     @Override
     public CategoryCreatedResponse addCategory(CategoryRequest categoryRequest) {
