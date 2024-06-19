@@ -111,4 +111,25 @@ class CategoryManagerTest {
         verify(categoryRepository, times(1)).save(category);
         assertEquals(expectedResponse.getId(), actualResponse.getId());
     }
+
+    @Test
+    void updateCategory_whenRequestIsValid_shouldReturnCategoryCreatedResponse() {
+        // GIVEN
+        CategoryRequest categoryRequest = CategoryRequest.builder().name("Test Category").build();
+        CategoryCreatedResponse expectedResponse = CategoryCreatedResponse.builder().name("Test Category").build();
+        Category category = Category.builder().build();
+
+        // WHEN
+        when(modelMapperService.forRequest()).thenReturn(modelMapper);
+        when(modelMapperService.forResponse()).thenReturn(modelMapper);
+        when(modelMapper.map(categoryRequest, Category.class)).thenReturn(category);
+        when(modelMapper.map(category, CategoryCreatedResponse.class)).thenReturn(expectedResponse);
+        when(categoryRepository.save(category)).thenReturn(category);
+
+        CategoryCreatedResponse actualResponse = categoryManager.updateCategory("1", categoryRequest);
+
+        // THEN
+        verify(categoryRepository, times(1)).save(category);
+        assertEquals(expectedResponse.getId(), actualResponse.getId());
+    }
 }

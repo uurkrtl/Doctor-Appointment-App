@@ -1,6 +1,7 @@
 package de.schnellertermin.backend.services.rules;
 
 import de.schnellertermin.backend.core.exceptions.types.DuplicateRecordException;
+import de.schnellertermin.backend.core.exceptions.types.RecordNotFoundException;
 import de.schnellertermin.backend.repositories.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,18 @@ class CategoryBusinessRuleTest {
 
         // THEN
         assertThrows(DuplicateRecordException.class, () -> categoryBusinessRule.checkIfCategoryNameExists(existingCategoryName));
+    }
+
+    @Test
+    void checkIfCategoryIdExists_whenCategoryIdDoesNotExist_shouldThrowRecordNotFoundException() {
+        // GIVEN
+        String nonExistingCategoryId = "NonExistingId";
+
+        // WHEN
+        when(categoryRepository.existsById(nonExistingCategoryId)).thenReturn(false);
+
+        // THEN
+        assertThrows(RecordNotFoundException.class, () -> categoryBusinessRule.checkIfCategoryIdExists(nonExistingCategoryId));
     }
 
 }

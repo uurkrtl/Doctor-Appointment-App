@@ -32,4 +32,9 @@ public class CategoryController {
     CategoryCreatedResponse addCategory (@Valid @RequestBody CategoryRequest categoryRequest){
         return categoryService.addCategory(categoryRequest);
     }
+
+    @PutMapping("/{id}")
+    CategoryCreatedResponse updateCategory(@PathVariable String id, @Valid @RequestBody CategoryRequest categoryRequest){
+        return categoryService.updateCategory(id, categoryRequest);
+    }
 }
