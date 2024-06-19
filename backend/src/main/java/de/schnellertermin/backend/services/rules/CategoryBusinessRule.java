@@ -1,6 +1,7 @@
 package de.schnellertermin.backend.services.rules;
 
 import de.schnellertermin.backend.core.exceptions.types.DuplicateRecordException;
+import de.schnellertermin.backend.core.exceptions.types.RecordNotFoundException;
 import de.schnellertermin.backend.repositories.CategoryRepository;
 import de.schnellertermin.backend.services.messages.CategoryMessage;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,12 @@ public class CategoryBusinessRule {
     public void checkIfCategoryNameExists(String categoryName) {
         if(categoryRepository.existsByName(categoryName)) {
             throw new DuplicateRecordException(CategoryMessage.CATEGORY_NAME_EXISTS);
+        }
+    }
+
+    public void checkIfCategoryIdExists(String categoryId) {
+        if(!categoryRepository.existsById(categoryId)) {
+            throw new RecordNotFoundException(CategoryMessage.CATEGORY_NOT_FOUND);
         }
     }
 }

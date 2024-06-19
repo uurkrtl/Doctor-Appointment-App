@@ -51,7 +51,7 @@ class CategoryControllerTest {
     }
 
     @Test
-    void getCategoryById_whenCategoryDoesNotExist_shouldReturnNotFound() throws Exception {
+    void getCategoryById_whenCategoryDoesNotExist_shouldReturnBadRequest() throws Exception {
         // GIVEN
         String categoryId = "1";
 
@@ -87,6 +87,36 @@ class CategoryControllerTest {
                         .content(objectMapper.writeValueAsString(categoryRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    void updateCategory_whenCategoryExists_shouldReturnCategory() throws Exception {
+        // GIVEN
+        String categoryId = "1";
+        categoryRepository.save(Category.builder().id(categoryId).name("Test Category").build());
+        CategoryRequest updatedCategory = CategoryRequest.builder().name("Updated Category").build();
+
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/api/categories/" + categoryId)
+                        .content(objectMapper.writeValueAsString(updatedCategory))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(categoryId));
+    }
+
+    @Test
+    void updateCategory_whenCategoryDoesNotExist_shouldReturnNotFound() throws Exception {
+        // GIVEN
+        String categoryId = "1";
+        CategoryRequest updatedCategory = CategoryRequest.builder().name("Updated Category").build();
+
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/categories/" + categoryId)
+                        .content(objectMapper.writeValueAsString(updatedCategory))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
 }
