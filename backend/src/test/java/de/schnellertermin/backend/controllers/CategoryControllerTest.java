@@ -119,4 +119,29 @@ class CategoryControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
+    @Test
+    void deleteCategory_whenCategoryIdExists_shouldDeleteCategory() throws Exception {
+        // GIVEN
+        String existingCategoryId = "NonExistingId";
+        categoryRepository.save(Category.builder().id(existingCategoryId).name("Test Category").build());
+
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/api/categories/delete/" + existingCategoryId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void deleteCategory_whenCategoryIdDoesNotExists_shouldReturnNotFound() throws Exception {
+        // GIVEN
+        String existingCategoryId = "NonExistingId";
+
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/api/categories/delete/" + existingCategoryId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
 }

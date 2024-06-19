@@ -132,4 +132,17 @@ class CategoryManagerTest {
         verify(categoryRepository, times(1)).save(category);
         assertEquals(expectedResponse.getId(), actualResponse.getId());
     }
+
+    @Test
+    void deleteCategory_whenCategoryIdExists_shouldDeleteCategory() {
+        // GIVEN
+        String existingCategoryId = "ExistingId";
+
+        // WHEN
+        when(categoryRepository.existsById(existingCategoryId)).thenReturn(true);
+        categoryManager.deleteCategory(existingCategoryId);
+
+        // THEN
+        verify(categoryRepository).deleteById(existingCategoryId);
+    }
 }

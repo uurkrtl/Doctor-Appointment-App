@@ -53,4 +53,10 @@ public class CategoryManager implements CategoryService {
         updatedCategory = categoryRepository.save(updatedCategory);
         return modelMapperService.forResponse().map(updatedCategory, CategoryCreatedResponse.class);
     }
+
+    @Override
+    public void deleteCategory(String id) {
+        categoryBusinessRule.checkIfCategoryIdExists(id);
+        categoryRepository.deleteById(id);
+    }
 }
