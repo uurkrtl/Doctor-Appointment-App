@@ -29,4 +29,19 @@ class IdManagerTest {
 
         assertTrue(id.startsWith("CAT-"));
     }
+
+    @Test
+    void whenGenerateComplaintId_returnUniqId(){
+        String id1 = idManager.generateComplaintId();
+        String id2 = idManager.generateComplaintId();
+
+        assertNotEquals(id1, id2);
+    }
+
+    @Test
+    void whenGenerateComplaintId_returnsIdWithCorrectPrefix() {
+        String id = idManager.generateComplaintId();
+
+        assertTrue(id.startsWith("COM-"));
+    }
 }

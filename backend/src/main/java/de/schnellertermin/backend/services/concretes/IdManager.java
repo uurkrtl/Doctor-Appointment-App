@@ -11,4 +11,9 @@ public class IdManager implements IdService {
     public String generateCategoryId() {
         return "CAT-" + UUID.randomUUID();
     }
+
+    @Override
+    public String generateComplaintId() {
+        return "COM-" + UUID.randomUUID();
+    }
 }
