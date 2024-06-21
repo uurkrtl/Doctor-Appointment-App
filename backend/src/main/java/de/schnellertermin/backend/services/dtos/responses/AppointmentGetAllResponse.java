@@ -22,7 +22,7 @@ public class AppointmentGetAllResponse {
     private Complaint complaint;
     private String description;
     private String imageUrl;
-    private String urgencyScore;
+    private Integer urgencyScore;
     private AppointmentStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

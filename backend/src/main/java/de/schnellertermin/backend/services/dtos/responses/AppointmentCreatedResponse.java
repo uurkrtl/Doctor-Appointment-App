@@ -17,5 +17,6 @@ public class AppointmentCreatedResponse {
     private String lastName;
     private String complaintName;
     private String description;
+    private Integer urgencyScore;
     private LocalDate appointmentDate;
 }

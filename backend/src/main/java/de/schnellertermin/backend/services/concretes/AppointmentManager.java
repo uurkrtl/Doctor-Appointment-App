@@ -11,11 +11,15 @@ import de.schnellertermin.backend.services.abstracts.AppointmentService;
 import de.schnellertermin.backend.services.abstracts.IdService;
 import de.schnellertermin.backend.services.dtos.requests.AppointmentRequest;
 import de.schnellertermin.backend.services.dtos.responses.AppointmentCreatedResponse;
+import de.schnellertermin.backend.services.dtos.responses.AppointmentGetAllResponse;
+import de.schnellertermin.backend.services.messages.AppointmentMessage;
 import de.schnellertermin.backend.services.messages.ComplaintMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,13 @@ public class AppointmentManager implements AppointmentService {
     private final ModelMapperService modelMapperService;
     private final IdService idService;
     private final ComplaintRepository complaintRepository;
+    private final OpenAiManager openAiManager;
+
+    @Override
+    public List<AppointmentGetAllResponse> getAllAppointments() {
+        List<Appointment> appointments = appointmentRepository.findAll();
+        return appointments.stream().map(appointment -> modelMapperService.forResponse().map(appointment, AppointmentGetAllResponse.class)).toList();
+    }
 
     @Override
     public AppointmentCreatedResponse addAppointmentTask(AppointmentRequest appointmentRequest) {
@@ -35,5 +46,20 @@ public class AppointmentManager implements AppointmentService {
         appointment.setComplaint(selectedComplaint);
         appointment = appointmentRepository.save(appointment);
         return modelMapperService.forResponse().map(appointment, AppointmentCreatedResponse.class);
+    }
+
+    @Override
+    public AppointmentCreatedResponse updateAppointmentScore(String id, String imageUrl, String description) throws IOException {
+        Appointment selectedAppointment = appointmentRepository.findById(id).orElseThrow(() -> new RecordNotFoundException(AppointmentMessage.APPOINTMENT_NOT_FOUND));
+
+        String openAiResult = openAiManager.sendRequest(imageUrl, description);
+        Integer score = Integer.valueOf(openAiResult.substring(0,1));
+
+        selectedAppointment.setUrgencyScore(score);
+        selectedAppointment.setImageUrl(imageUrl);
+        selectedAppointment.setDescription(description);
+        selectedAppointment.setUpdatedAt(LocalDateTime.now());
+        selectedAppointment = appointmentRepository.save(selectedAppointment);
+        return modelMapperService.forResponse().map(selectedAppointment, AppointmentCreatedResponse.class);
     }
 }

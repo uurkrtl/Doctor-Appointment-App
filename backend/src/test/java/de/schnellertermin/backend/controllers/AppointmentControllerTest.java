@@ -35,6 +35,16 @@ class AppointmentControllerTest {
     ComplaintRepository complaintRepository;
 
     @Test
+    void getAllAppointments_shouldReturnsListOfAppointments() throws Exception {
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/appointments")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray());
+    }
+
+    @Test
     void addAppointment_whenRequestIsValid_returnAppointmentCreatedResponse() throws Exception {
         // GIVEN
         Category category = categoryRepository.save(Category.builder().name("Test Category").build());

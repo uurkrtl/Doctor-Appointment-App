@@ -8,6 +8,7 @@ import de.schnellertermin.backend.repositories.ComplaintRepository;
 import de.schnellertermin.backend.services.abstracts.IdService;
 import de.schnellertermin.backend.services.dtos.requests.AppointmentRequest;
 import de.schnellertermin.backend.services.dtos.responses.AppointmentCreatedResponse;
+import de.schnellertermin.backend.services.dtos.responses.AppointmentGetAllResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +33,9 @@ class AppointmentManagerTest {
     private AppointmentRepository appointmentRepository;
 
     @Mock
+    private OpenAiManager openAiManager;
+
+    @Mock
     private ComplaintRepository complaintRepository;
 
     @Mock
@@ -42,6 +48,24 @@ class AppointmentManagerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         modelMapper = mock(ModelMapper.class);
+    }
+
+    @Test
+    void getAllAppointments_shouldReturnsListOfAppointments() {
+        // GIVEN
+        List<Appointment> appointments = List.of(
+                Appointment.builder().id("1").build(),
+                Appointment.builder().id("2").build()
+        );
+
+        // WHEN
+        when(modelMapperService.forResponse()).thenReturn(modelMapper);
+        when(appointmentRepository.findAll()).thenReturn(appointments);
+
+        List<AppointmentGetAllResponse> actualResponse = appointmentManager.getAllAppointments();
+
+        // THEN
+        assertEquals(2, actualResponse.size());
     }
 
     @Test
@@ -65,6 +89,36 @@ class AppointmentManagerTest {
         // THEN
         verify(appointmentRepository, times(1)).save(appointment);
         assertEquals(expectedResponse.getId(), actualResponse.getId());
+    }
+
+    @Test
+    void updateAppointmentScore_whenRequestIsValid_shouldReturnAppointmentCreatedResponse() throws IOException {
+        // GIVEN
+        String appointmentId = "testId";
+        String imageUrl = "testImageUrl";
+        String description = "testDescription";
+        String openAiResult = "1 point";
+
+        AppointmentCreatedResponse expectedResponse = AppointmentCreatedResponse.builder()
+                .description(description)
+                .urgencyScore(Integer.valueOf(openAiResult.substring(0,1)))
+                .build();
+        Appointment appointment = Appointment.builder().build();
+
+        // WHEN
+        when(modelMapperService.forResponse()).thenReturn(modelMapper);
+        when(modelMapper.map(appointment, AppointmentCreatedResponse.class)).thenReturn(expectedResponse);
+        when(appointmentRepository.save(appointment)).thenReturn(appointment);
+        when(openAiManager.sendRequest(imageUrl, description)).thenReturn(openAiResult);
+        when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
+
+        AppointmentCreatedResponse actualResponse = appointmentManager.updateAppointmentScore(appointmentId, imageUrl, description);
+
+        // THEN
+        verify(appointmentRepository, times(1)).save(appointment);
+        assertEquals(expectedResponse.getId(), actualResponse.getId());
+        assertEquals(expectedResponse.getDescription(), actualResponse.getDescription());
+        assertEquals(expectedResponse.getUrgencyScore(), actualResponse.getUrgencyScore());
     }
 
 }
