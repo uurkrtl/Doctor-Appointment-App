@@ -1,5 +1,6 @@
 package de.schnellertermin.backend.services.dtos.responses;
 
+import de.schnellertermin.backend.models.enums.AppointmentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +20,5 @@ public class AppointmentCreatedResponse {
     private String description;
     private Integer urgencyScore;
     private LocalDate appointmentDate;
+    private AppointmentStatus status;
 }

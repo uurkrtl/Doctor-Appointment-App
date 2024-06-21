@@ -1,8 +1,10 @@
 package de.schnellertermin.backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.schnellertermin.backend.models.Appointment;
 import de.schnellertermin.backend.models.Category;
 import de.schnellertermin.backend.models.Complaint;
+import de.schnellertermin.backend.repositories.AppointmentRepository;
 import de.schnellertermin.backend.repositories.CategoryRepository;
 import de.schnellertermin.backend.repositories.ComplaintRepository;
 import de.schnellertermin.backend.services.dtos.requests.AppointmentRequest;
@@ -16,6 +18,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,6 +39,8 @@ class AppointmentControllerTest {
 
     @Autowired
     ComplaintRepository complaintRepository;
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     @Test
     void getAllAppointments_shouldReturnsListOfAppointments() throws Exception {
@@ -58,6 +66,23 @@ class AppointmentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists());
+    }
+
+    @Test
+    void updateAppointmentStatus_whenRequestIsValid_shouldReturnAppointmentCreatedResponse() throws Exception {
+        // GIVEN
+        Category category = categoryRepository.save(Category.builder().name("Test Category").build());
+        Complaint complaint = complaintRepository.save(Complaint.builder().name("Test Complaint").category(category).build());
+        String appointmentId = appointmentRepository.save(Appointment.builder().complaint(complaint).build()).getId();
+        String status = "ACTIVE";
+
+        // WHEN & THEN
+        mockMvc.perform(put("/api/appointments/set-status/{id}", appointmentId)
+                        .param("status", status)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(appointmentId))
+                .andExpect(jsonPath("$.status").value(status));
     }
 
 }

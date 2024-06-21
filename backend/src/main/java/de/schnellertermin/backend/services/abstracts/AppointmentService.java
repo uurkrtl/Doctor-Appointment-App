@@ -11,4 +11,5 @@ public interface AppointmentService {
     List<AppointmentGetAllResponse> getAllAppointments();
     AppointmentCreatedResponse addAppointmentTask(AppointmentRequest appointmentRequest);
     AppointmentCreatedResponse updateAppointmentScore(String id, String imageUrl, String description) throws IOException;
+    AppointmentCreatedResponse updateAppointmentStatus(String id, String status);
 }

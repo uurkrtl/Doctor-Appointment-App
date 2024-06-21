@@ -32,4 +32,9 @@ public class AppointmentController {
     AppointmentCreatedResponse updateAppointmentScore(@PathVariable String id, @RequestParam String imageUrl, @RequestParam String description) throws IOException {
         return appointmentService.updateAppointmentScore(id, imageUrl, description);
     }
+
+    @PutMapping("/set-status/{id}")
+    AppointmentCreatedResponse updateAppointmentStatus(@PathVariable String id, @RequestParam String status) {
+        return appointmentService.updateAppointmentStatus(id, status);
+    }
 }
