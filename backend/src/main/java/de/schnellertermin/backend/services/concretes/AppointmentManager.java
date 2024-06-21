@@ -62,4 +62,12 @@ public class AppointmentManager implements AppointmentService {
         selectedAppointment = appointmentRepository.save(selectedAppointment);
         return modelMapperService.forResponse().map(selectedAppointment, AppointmentCreatedResponse.class);
     }
+
+    @Override
+    public AppointmentCreatedResponse updateAppointmentStatus(String id, String status) {
+        Appointment selectedAppointment = appointmentRepository.findById(id).orElseThrow(() -> new RecordNotFoundException(AppointmentMessage.APPOINTMENT_NOT_FOUND));
+        selectedAppointment.setStatus(AppointmentStatus.valueOf(status));
+        selectedAppointment = appointmentRepository.save(selectedAppointment);
+        return modelMapperService.forResponse().map(selectedAppointment, AppointmentCreatedResponse.class);
+    }
 }

@@ -3,6 +3,7 @@ package de.schnellertermin.backend.services.concretes;
 import de.schnellertermin.backend.core.mappers.ModelMapperService;
 import de.schnellertermin.backend.models.Appointment;
 import de.schnellertermin.backend.models.Complaint;
+import de.schnellertermin.backend.models.enums.AppointmentStatus;
 import de.schnellertermin.backend.repositories.AppointmentRepository;
 import de.schnellertermin.backend.repositories.ComplaintRepository;
 import de.schnellertermin.backend.services.abstracts.IdService;
@@ -119,6 +120,31 @@ class AppointmentManagerTest {
         assertEquals(expectedResponse.getId(), actualResponse.getId());
         assertEquals(expectedResponse.getDescription(), actualResponse.getDescription());
         assertEquals(expectedResponse.getUrgencyScore(), actualResponse.getUrgencyScore());
+    }
+
+    @Test
+    void updateAppointmentStatus_whenRequestIsValid_shouldReturnAppointmentCreatedResponse() {
+        // GIVEN
+        String appointmentId = "testId";
+        String status = "ACTIVE";
+
+        AppointmentCreatedResponse expectedResponse = AppointmentCreatedResponse.builder()
+                .status(AppointmentStatus.ACTIVE)
+                .build();
+        Appointment appointment = Appointment.builder().build();
+
+        // WHEN
+        when(modelMapperService.forResponse()).thenReturn(modelMapper);
+        when(modelMapper.map(appointment, AppointmentCreatedResponse.class)).thenReturn(expectedResponse);
+        when(appointmentRepository.save(appointment)).thenReturn(appointment);
+        when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
+
+        AppointmentCreatedResponse actualResponse = appointmentManager.updateAppointmentStatus(appointmentId, status);
+
+        // THEN
+        verify(appointmentRepository, times(1)).save(appointment);
+        assertEquals(expectedResponse.getId(), actualResponse.getId());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
     }
 
 }
