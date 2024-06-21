@@ -39,6 +39,21 @@ class IdManagerTest {
     }
 
     @Test
+    void whenGenerateAppointmentId_returnsIdWithCorrectPrefix() {
+        String id = idManager.generateAppointmentId();
+
+        assertTrue(id.startsWith("APN-"));
+    }
+
+    @Test
+    void whenGenerateAppointmentId_returnUniqId(){
+        String id1 = idManager.generateAppointmentId();
+        String id2 = idManager.generateAppointmentId();
+
+        assertNotEquals(id1, id2);
+    }
+
+    @Test
     void whenGenerateComplaintId_returnsIdWithCorrectPrefix() {
         String id = idManager.generateComplaintId();
 
