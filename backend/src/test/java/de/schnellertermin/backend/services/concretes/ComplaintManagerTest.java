@@ -8,6 +8,7 @@ import de.schnellertermin.backend.repositories.ComplaintRepository;
 import de.schnellertermin.backend.services.abstracts.IdService;
 import de.schnellertermin.backend.services.dtos.requests.ComplaintRequest;
 import de.schnellertermin.backend.services.dtos.responses.ComplaintCreatedResponse;
+import de.schnellertermin.backend.services.dtos.responses.ComplaintGetAllResponse;
 import de.schnellertermin.backend.services.rules.ComplaintBusinessRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,6 +49,24 @@ class ComplaintManagerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         modelMapper = mock(ModelMapper.class);
+    }
+
+    @Test
+    void getAllComplaints_shouldReturnsListOfComplaints() {
+        // GIVEN
+        List<Complaint> complaints = List.of(
+                Complaint.builder().id("1").build(),
+                Complaint.builder().id("2").build()
+        );
+
+        // WHEN
+        when(modelMapperService.forResponse()).thenReturn(modelMapper);
+        when(complaintRepository.findAll()).thenReturn(complaints);
+
+        List<ComplaintGetAllResponse> actualResponse = complaintManager.getAllComplaints();
+
+        // THEN
+        assertEquals(2, actualResponse.size());
     }
 
     @Test

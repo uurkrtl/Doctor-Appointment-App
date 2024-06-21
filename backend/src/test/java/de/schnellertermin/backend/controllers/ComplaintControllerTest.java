@@ -42,6 +42,16 @@ class ComplaintControllerTest {
     }
 
     @Test
+    void getAllComplaints_shouldReturnsListOfComplaints() throws Exception {
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/complaints")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray());
+    }
+
+    @Test
     void addComplaint_whenRequestIsValid_returnComplaintCreatedResponse() throws Exception {
         // GIVEN
         Category category = Category.builder().name("Test Category").build();

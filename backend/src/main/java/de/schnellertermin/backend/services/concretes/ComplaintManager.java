@@ -10,10 +10,13 @@ import de.schnellertermin.backend.services.abstracts.ComplaintService;
 import de.schnellertermin.backend.services.abstracts.IdService;
 import de.schnellertermin.backend.services.dtos.requests.ComplaintRequest;
 import de.schnellertermin.backend.services.dtos.responses.ComplaintCreatedResponse;
+import de.schnellertermin.backend.services.dtos.responses.ComplaintGetAllResponse;
 import de.schnellertermin.backend.services.messages.CategoryMessage;
 import de.schnellertermin.backend.services.rules.ComplaintBusinessRule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,12 @@ public class ComplaintManager implements ComplaintService {
     private final ModelMapperService modelMapperService;
     private final IdService idService;
     private final ComplaintBusinessRule complaintBusinessRule;
+
+    @Override
+    public List<ComplaintGetAllResponse> getAllComplaints() {
+        List<Complaint> complaints = complaintRepository.findAll();
+        return complaints.stream().map(complaint -> modelMapperService.forResponse().map(complaint, ComplaintGetAllResponse.class)).toList();
+    }
 
     @Override
     public ComplaintCreatedResponse addComplaint(ComplaintRequest complaintRequest) {
