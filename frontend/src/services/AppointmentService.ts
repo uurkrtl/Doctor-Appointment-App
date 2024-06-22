@@ -15,7 +15,7 @@ export default class AppointmentService {
     }
 
     updateAppointmentScore(id: string, imageUrl: string, description: string) {
-        return axios.put(`/api/appointments/${id}`, {imageUrl, description})
+        return axios.put(`/api/appointments/set-score/${id}?imageUrl=${imageUrl}&description=${description}`)
     }
 
     updateAppointmentStatus(id: string, status: string) {
