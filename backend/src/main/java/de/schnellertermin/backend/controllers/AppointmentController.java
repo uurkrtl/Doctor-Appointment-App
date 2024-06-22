@@ -22,6 +22,11 @@ public class AppointmentController {
         return appointmentService.getAllAppointments();
     }
 
+    @GetMapping("/{id}")
+    AppointmentCreatedResponse getAppointmentById(@PathVariable String id) {
+        return appointmentService.getAppointmentById(id);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     AppointmentCreatedResponse addAppointmentTask(@RequestBody AppointmentRequest appointmentRequest) {

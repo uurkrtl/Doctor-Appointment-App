@@ -82,7 +82,7 @@ class CategoryManagerTest {
     }
 
     @Test
-    void getCategoryById_whenCategoryDoesNotExist_shouldReturnNull() {
+    void getCategoryById_whenCategoryDoesNotExist_shouldThrowRecordNotFoundException() {
         // GIVEN & WHEN
         when(categoryRepository.findById("1")).thenReturn(Optional.empty());
 

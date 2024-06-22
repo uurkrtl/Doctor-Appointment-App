@@ -37,6 +37,12 @@ public class AppointmentManager implements AppointmentService {
     }
 
     @Override
+    public AppointmentCreatedResponse getAppointmentById(String id) {
+        Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new RecordNotFoundException(AppointmentMessage.APPOINTMENT_NOT_FOUND));
+        return modelMapperService.forResponse().map(appointment, AppointmentCreatedResponse.class);
+    }
+
+    @Override
     public AppointmentCreatedResponse addAppointmentTask(AppointmentRequest appointmentRequest) {
         Appointment appointment = modelMapperService.forRequest().map(appointmentRequest, Appointment.class);
         Complaint selectedComplaint = complaintRepository.findById(appointmentRequest.getComplaintId()).orElseThrow(() -> new RecordNotFoundException(ComplaintMessage.COMPLAINT_NOT_FOUND));
