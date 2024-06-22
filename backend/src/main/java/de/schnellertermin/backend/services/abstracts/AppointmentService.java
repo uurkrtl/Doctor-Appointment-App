@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface AppointmentService {
     List<AppointmentGetAllResponse> getAllAppointments();
+    AppointmentCreatedResponse getAppointmentById(String id);
     AppointmentCreatedResponse addAppointmentTask(AppointmentRequest appointmentRequest);
     AppointmentCreatedResponse updateAppointmentScore(String id, String imageUrl, String description) throws IOException;
     AppointmentCreatedResponse updateAppointmentStatus(String id, String status);

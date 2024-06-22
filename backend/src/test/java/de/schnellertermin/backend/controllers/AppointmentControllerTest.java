@@ -53,6 +53,20 @@ class AppointmentControllerTest {
     }
 
     @Test
+    void getAppointmentById_whenAppointmentExists_shouldReturnAppointment() throws Exception {
+        // GIVEN
+        String appointmentId = "TestId";
+        appointmentRepository.save(Appointment.builder().id(appointmentId).build());
+
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/api/appointments/" + appointmentId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(appointmentId));
+    }
+
+    @Test
     void addAppointment_whenRequestIsValid_returnAppointmentCreatedResponse() throws Exception {
         // GIVEN
         Category category = categoryRepository.save(Category.builder().name("Test Category").build());

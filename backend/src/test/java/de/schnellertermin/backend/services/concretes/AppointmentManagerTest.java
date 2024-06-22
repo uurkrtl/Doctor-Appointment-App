@@ -1,5 +1,6 @@
 package de.schnellertermin.backend.services.concretes;
 
+import de.schnellertermin.backend.core.exceptions.types.RecordNotFoundException;
 import de.schnellertermin.backend.core.mappers.ModelMapperService;
 import de.schnellertermin.backend.models.Appointment;
 import de.schnellertermin.backend.models.Complaint;
@@ -67,6 +68,32 @@ class AppointmentManagerTest {
 
         // THEN
         assertEquals(2, actualResponse.size());
+    }
+
+    @Test
+    void getAppointmentById_whenAppointmentExists_shouldReturnAppointment() {
+        // GIVEN
+        Appointment appointment = Appointment.builder().id("1").build();
+        AppointmentCreatedResponse expectedResponse = AppointmentCreatedResponse.builder().id("1").build();
+
+        // WHEN
+        when(modelMapperService.forResponse()).thenReturn(modelMapper);
+        when(modelMapperService.forResponse().map(appointment, AppointmentCreatedResponse.class)).thenReturn(expectedResponse);
+        when(appointmentRepository.findById("1")).thenReturn(Optional.of(appointment));
+
+        AppointmentCreatedResponse actualResponse = appointmentManager.getAppointmentById("1");
+
+        // THEN
+        assertEquals(expectedResponse.getId(), actualResponse.getId());
+    }
+
+    @Test
+    void getAppointmentById_whenAppointmentDoesNotExists_shouldThrowRecordNotFoundException() {
+        // GIVEN & WHEN
+        when(appointmentRepository.findById("1")).thenReturn(Optional.empty());
+
+        // THEN
+        assertThrows(RecordNotFoundException.class, () -> appointmentManager.getAppointmentById("1"));
     }
 
     @Test
