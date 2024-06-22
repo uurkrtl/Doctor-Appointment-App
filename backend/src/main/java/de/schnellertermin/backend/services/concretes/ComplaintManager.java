@@ -34,6 +34,12 @@ public class ComplaintManager implements ComplaintService {
     }
 
     @Override
+    public List<ComplaintGetAllResponse> getComplaintsByCategoryId(String categoryId) {
+        List<Complaint> complaints = complaintRepository.findByCategoryId(categoryId);
+        return complaints.stream().map(complaint -> modelMapperService.forResponse().map(complaint, ComplaintGetAllResponse.class)).toList();
+    }
+
+    @Override
     public ComplaintCreatedResponse addComplaint(ComplaintRequest complaintRequest) {
         complaintBusinessRule.checkIfComplaintNameExists(complaintRequest.getName());
         Complaint complaint = modelMapperService.forRequest().map(complaintRequest, Complaint.class);

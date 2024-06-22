@@ -22,6 +22,11 @@ public class ComplaintController {
         return complaintService.getAllComplaints();
     }
 
+    @GetMapping("/{categoryId}")
+    List<ComplaintGetAllResponse> getComplaintsByCategoryId(@PathVariable String categoryId) {
+        return complaintService.getComplaintsByCategoryId(categoryId);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     ComplaintCreatedResponse addComplaint(@Valid @RequestBody ComplaintRequest complaintRequest) {

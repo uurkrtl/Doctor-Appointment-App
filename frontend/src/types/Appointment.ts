@@ -3,7 +3,7 @@ export type Appointment = {
     firstName: string,
     lastName: string,
     appointmentDate: Date,
-    complaintId: number,
+    complaintId: string,
     description: string,
     imageUrl: string,
     urgencyScore: number,

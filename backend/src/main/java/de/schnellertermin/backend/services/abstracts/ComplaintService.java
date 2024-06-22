@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface ComplaintService {
     List<ComplaintGetAllResponse> getAllComplaints();
+    List<ComplaintGetAllResponse> getComplaintsByCategoryId(String categoryId);
     ComplaintCreatedResponse addComplaint (ComplaintRequest complaintRequest);
 }
