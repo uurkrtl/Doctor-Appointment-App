@@ -70,6 +70,25 @@ class ComplaintManagerTest {
     }
 
     @Test
+    void getComplaintsByCategoryId_shouldReturnsListOfComplaints() {
+        // GIVEN
+        String categoryId = "1";
+        List<Complaint> complaints = List.of(
+                Complaint.builder().id("1").build(),
+                Complaint.builder().id("2").build()
+        );
+
+        // WHEN
+        when(modelMapperService.forResponse()).thenReturn(modelMapper);
+        when(complaintRepository.findByCategoryId(categoryId)).thenReturn(complaints);
+
+        List<ComplaintGetAllResponse> actualResponse = complaintManager.getComplaintsByCategoryId(categoryId);
+
+        // THEN
+        assertEquals(2, actualResponse.size());
+    }
+
+    @Test
     void addComplaint_whenRequestIsValid_shouldReturnComplaintCreatedResponse() {
         // GIVEN
         ComplaintRequest complaintRequest = ComplaintRequest.builder().name("Test Complaint").categoryId("1").build();
